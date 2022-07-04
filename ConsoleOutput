@@ -1,0 +1,169 @@
+Started by user gonulnur
+Obtained Jenkinsfile from git https://github.com/gonulkirazdiken/HelloWorld.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/helloworld
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone repository)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential docker-hub
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/helloworld/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/gonulkirazdiken/HelloWorld.git # timeout=10
+Fetching upstream changes from https://github.com/gonulkirazdiken/HelloWorld.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.25.1'
+using GIT_ASKPASS to set credentials docker-hub
+ > git fetch --tags --force --progress -- https://github.com/gonulkirazdiken/HelloWorld.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision a3b3c0dcbf6aa2190229d056ff0f2b824a4ae6d4 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f a3b3c0dcbf6aa2190229d056ff0f2b824a4ae6d4 # timeout=10
+Commit message: "Create Jenkinsfile"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build image)
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t gonulnurkirazdiken/helloworld .
+Sending build context to Docker daemon  64.51kB
+
+Step 1/5 : FROM python:3.9-slim
+ ---> 32504e766568
+Step 2/5 : WORKDIR  .
+ ---> Using cache
+ ---> 6013a0bfb615
+Step 3/5 : COPY . .
+ ---> Using cache
+ ---> e3d9af0a12d8
+Step 4/5 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> c8d166fc7120
+Step 5/5 : CMD ["python", "./app.py"]
+ ---> Using cache
+ ---> 8edb9399c348
+Successfully built 8edb9399c348
+Successfully tagged gonulnurkirazdiken/helloworld:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test image)
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker inspect -f . gonulnurkirazdiken/helloworld
+.
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] withDockerContainer
+Jenkins does not seem to be running inside a container
+$ docker run -t -d -u 127:134 -w /var/lib/jenkins/workspace/helloworld -v /var/lib/jenkins/workspace/helloworld:/var/lib/jenkins/workspace/helloworld:rw,z -v /var/lib/jenkins/workspace/helloworld@tmp:/var/lib/jenkins/workspace/helloworld@tmp:rw,z -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** gonulnurkirazdiken/helloworld cat
+$ docker top 631e356a3dceda65de7c783573910f0a696088b4dc68872f338bfd56812210ed -eo pid,comm
+[Pipeline] {
+[Pipeline] echo
+Tests passed
+[Pipeline] }
+$ docker stop --time=1 631e356a3dceda65de7c783573910f0a696088b4dc68872f338bfd56812210ed
+$ docker rm -f 631e356a3dceda65de7c783573910f0a696088b4dc68872f338bfd56812210ed
+[Pipeline] // withDockerContainer
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push image)
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withDockerRegistry
+$ docker login -u gonulnurkirazdiken -p ******** https://registry.hub.docker.com
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/workspace/helloworld@tmp/9a77c1f1-867a-4024-a102-90c05187fe67/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag gonulnurkirazdiken/helloworld registry.hub.docker.com/gonulnurkirazdiken/helloworld:1
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push registry.hub.docker.com/gonulnurkirazdiken/helloworld:1
+The push refers to repository [registry.hub.docker.com/gonulnurkirazdiken/helloworld]
+77781925f9c4: Preparing
+749ea76fc94d: Preparing
+4e1acd5ea471: Preparing
+a11c4594e7fb: Preparing
+1113565264c8: Preparing
+d442021c7190: Preparing
+08249ce7456a: Preparing
+d442021c7190: Waiting
+08249ce7456a: Waiting
+77781925f9c4: Layer already exists
+a11c4594e7fb: Layer already exists
+4e1acd5ea471: Layer already exists
+749ea76fc94d: Layer already exists
+1113565264c8: Layer already exists
+08249ce7456a: Layer already exists
+d442021c7190: Layer already exists
+1: digest: sha256:5d9fefb77ab264676fc32c268833d7c586d87fe3c38b65a4e1f02de713a6adf7 size: 1790
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag gonulnurkirazdiken/helloworld registry.hub.docker.com/gonulnurkirazdiken/helloworld:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push registry.hub.docker.com/gonulnurkirazdiken/helloworld:latest
+The push refers to repository [registry.hub.docker.com/gonulnurkirazdiken/helloworld]
+77781925f9c4: Preparing
+749ea76fc94d: Preparing
+4e1acd5ea471: Preparing
+a11c4594e7fb: Preparing
+1113565264c8: Preparing
+d442021c7190: Preparing
+08249ce7456a: Preparing
+d442021c7190: Waiting
+08249ce7456a: Waiting
+4e1acd5ea471: Layer already exists
+77781925f9c4: Layer already exists
+1113565264c8: Layer already exists
+a11c4594e7fb: Layer already exists
+749ea76fc94d: Layer already exists
+d442021c7190: Layer already exists
+08249ce7456a: Layer already exists
+latest: digest: sha256:5d9fefb77ab264676fc32c268833d7c586d87fe3c38b65a4e1f02de713a6adf7 size: 1790
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] echo
+Trying to Push Docker Build to DockerHub
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
